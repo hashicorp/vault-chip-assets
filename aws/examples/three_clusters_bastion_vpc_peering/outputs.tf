@@ -7,7 +7,7 @@ output "Bastion_DNS" {
 }
 
 output "SSH_Key" {
-  value = aws_key_pair.key.key_name
+  value = local_file.private_key.filename
 }
 
 output "Primary_Vault_Cluster_LB" {

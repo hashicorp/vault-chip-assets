@@ -68,7 +68,7 @@ module "bastion_vpc" {
   tags = local.tags
 
   vpc_tags = {
-    Name = "${random_id.deployment_tag.hex}-vpc"
+    Name    = "${random_id.deployment_tag.hex}-vpc"
     Purpose = "bastion"
   }
   providers = {
@@ -121,7 +121,7 @@ data "aws_ami" "latest-image" {
 resource "aws_instance" "bastion" {
   provider      = aws.region1
   ami           = data.aws_ami.latest-image.id
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   subnet_id     = module.bastion_vpc.public_subnets[0]
   key_name      = aws_key_pair.key.key_name
   user_data     = <<EOF
@@ -130,7 +130,7 @@ resource "aws_instance" "bastion" {
 sudo apt-get update -y
 sudo apt-get install -y unzip
 
-wget https://releases.hashicorp.com/vault/1.3.2+ent/vault_1.3.2+ent_linux_amd64.zip -O vault.zip
+wget https://releases.hashicorp.com/vault/1.7.1+ent/vault_1.7.1+ent_linux_amd64.zip -O vault.zip
 unzip vault
 mv vault /usr/bin/vault
 EOF
@@ -140,11 +140,8 @@ EOF
 
 module "primary_cluster" {
   source                     = "../../"
-  consul_version             = "1.6.3+ent"
-  vault_version              = "1.3.2+ent"
-  consul_cluster_size        = 6
+  vault_version              = "1.7.1+ent"
   vault_cluster_size         = 3
-  consul_ent_license         = var.consul_ent_license
   enable_deletion_protection = false
   subnet_second_octet        = "0"
   force_bucket_destroy       = true
@@ -156,11 +153,8 @@ module "primary_cluster" {
 
 module "dr_cluster" {
   source                     = "../../"
-  consul_version             = "1.6.3+ent"
-  vault_version              = "1.3.2+ent"
-  consul_cluster_size        = 1
+  vault_version              = "1.7.1+ent"
   vault_cluster_size         = 1
-  consul_ent_license         = var.consul_ent_license
   enable_deletion_protection = false
   subnet_second_octet        = "1"
   force_bucket_destroy       = true
@@ -172,11 +166,8 @@ module "dr_cluster" {
 
 module "eu_cluster" {
   source                     = "../../"
-  consul_version             = "1.6.3+ent"
-  vault_version              = "1.3.2+ent"
-  consul_cluster_size        = 1
+  vault_version              = "1.7.1+ent"
   vault_cluster_size         = 1
-  consul_ent_license         = var.consul_ent_license
   enable_deletion_protection = false
   subnet_second_octet        = "2"
   force_bucket_destroy       = true
@@ -336,7 +327,7 @@ resource "aws_default_security_group" "dr_cluster" {
     cidr_blocks = module.bastion_vpc.public_subnets_cidr_blocks
   }
 
-    egress {
+  egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

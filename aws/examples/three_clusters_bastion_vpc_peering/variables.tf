@@ -1,7 +1,6 @@
 variable "tags" {
   default = {}
 }
-variable "consul_ent_license" {}
 variable "region1" {
   default = "us-east-1"
 }

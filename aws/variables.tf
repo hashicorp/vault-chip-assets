@@ -15,19 +15,9 @@ variable "ami_filter_name" {
 }
 variable "vpc_id" { default = "" }
 variable "subnet_ids" { default = "" }
-variable "consul_ent_license" { default = "" }
-# This is not implimented yet
-#variable "vault_ent_license" { default = "" }
-variable "consul_version" {
-  default = "1.6.3"
-}
-variable "consul_download_url" { default = "" }
 variable "vault_version" {
-  default = "1.3.2"
+  default = "1.7.1+ent"
 }
-variable "vault_download_url" { default = "" }
-variable "cluster_tag_key" { default = "consul-servers" }
-variable "cluster_tag_value" { default = "auto-join" }
 variable "consul_path" { default = "" }
 variable "vault_path" { default = "" }
 variable "consul_user" { default = "" }
@@ -35,14 +25,6 @@ variable "vault_user" { default = "" }
 variable "ca_path" { default = "" }
 variable "cert_file_path" { default = "" }
 variable "key_file_path" { default = "" }
-variable "server" { default = true }
-variable "client" { default = false }
-variable "config_dir" { default = "" }
-variable "data_dir" { default = "" }
-variable "systemd_stdout" { default = "" }
-variable "systemd_stderr" { default = "" }
-variable "bin_dir" { default = "" }
-variable "datacenter" { default = "" }
 variable "autopilot_cleanup_dead_servers" { default = "" }
 variable "autopilot_last_contact_threshold" { default = "" }
 variable "autopilot_max_trailing_logs" { default = "" }
@@ -70,3 +52,23 @@ variable "enable_consul_http_encryption" { default = false }
 variable "enable_deletion_protection" { default = true }
 variable "subnet_second_octet" { default = "0" }
 variable "create_bastion" { default = true }
+
+variable "vault_binary" {
+  type        = string
+  default     = "vault-enterprise"
+  description = "Vault binary to use, valid choices are `vault-enterprise` and `vault`"
+}
+
+
+variable "skip_init" {
+  type        = bool
+  default     = true
+  description = "Whether to skip vult init and unseal or not"
+}
+
+
+variable "additional_setup" {
+  type        = string
+  description = "Additional setup steps to be executed using bash after vault setup."
+  default     = null
+}

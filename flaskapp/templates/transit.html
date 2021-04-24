@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% set active_page = "transit" %}
+
+
+{% block title %}Vault Transit Demo{% endblock  %}
+{% block content %}
+    <div class="row my-5">
+      <div class="col-sm mx-auto my-auto">
+        <p> This application shells out to a binary which it expects to encrypt and decrypt data.</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Command</th>
+              <th scope="col">Text</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{ command }}</th>
+              <td>{{ text }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <form method="POST" id="transit">
+          Text: <input type="text" name="text">
+          <input type="submit" value="Submit">
+        </form>
+        Encrypt/Decrypt:
+        <select name="command" form="transit">
+          <option value="encrypt">Encrypt</option>
+          <option value="decrypt">Decrypt</option>
+        </select>
+      </div>
+    </div>
+{% endblock %}

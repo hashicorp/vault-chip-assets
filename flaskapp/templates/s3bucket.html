@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% set active_page = "s3bucket" %}
+
+
+{% block title %}s3 bucket file explorer{% endblock  %}
+{% block content %}
+    <div class="row my-5">
+      <div class="col-sm-4 mx-auto my-auto">
+      </div>
+      <div class="col-sm mx-auto my-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Bucket</th>
+              <th scope="col">Files</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{ bucket }}</th>
+              <td>{{ files }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <form method="POST" id="s3">
+          Bucket: <input type="text" name="bucket">
+          Key: <input type="text" name="key">
+          <input type="submit" value="Submit">
+        </form>
+        Encrypt/Decrypt:
+        <select name="command" form="s3">
+          <option value="ls">ls</option>
+          <option value="get">get</option>
+          <option value="rm">rm</option>
+        </select>
+      </div>
+    </div>
+
+{% endblock %}

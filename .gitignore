@@ -10,3 +10,4 @@
 
 # pem files
 *.pem
+.terraform.lock.hcl

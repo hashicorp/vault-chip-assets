@@ -7,7 +7,7 @@ output "Bastion_DNS" {
 }
 
 output "SSH_Key" {
-  value = local_file.private_key.filename
+  value = abspath(local_file.private_key.filename)
 }
 
 output "Primary_Vault_Cluster_LB" {

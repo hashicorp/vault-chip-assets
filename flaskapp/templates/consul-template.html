@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% set active_page = "consul-template" %}
+
+
+{% block title %}Consul-Template Demo{% endblock  %}
+{% block content %}
+    <div class="row my-5">
+      <div class="col-sm-4 mx-auto my-auto">
+      </div>
+      <div class="col-sm mx-auto my-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Username</th>
+              <th scope="col">Password</th>
+              <th scope="col">Hostname</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{ username }}</th>
+              <td>{{ password }}</td>
+              <td>{{ hostname }}</td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                    <th scope="row">Mysql User Table</th>
+                    <td>{{ mysqlusertable }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+{% endblock %}

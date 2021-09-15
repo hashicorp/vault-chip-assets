@@ -10,3 +10,8 @@ variable "region2" {
 variable "region3" {
   default = "eu-central-1"
 }
+
+variable "vault_license" {
+  type    = string
+  default = null
+}

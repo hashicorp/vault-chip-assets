@@ -16,7 +16,7 @@ variable "ami_filter_name" {
 variable "vpc_id" { default = "" }
 variable "subnet_ids" { default = "" }
 variable "vault_version" {
-  default = "1.7.1+ent"
+  default = "1.8.2+ent"
 }
 variable "consul_path" { default = "" }
 variable "vault_path" { default = "" }
@@ -71,4 +71,9 @@ variable "additional_setup" {
   type        = string
   description = "Additional setup steps to be executed using bash after vault setup."
   default     = null
+}
+
+variable "vault_license" {
+  type    = string
+  default = null
 }

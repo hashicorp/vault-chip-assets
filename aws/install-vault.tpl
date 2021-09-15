@@ -234,6 +234,9 @@ function generate_vault_config {
   instance_region=$(get_instance_region)
 
   log_info "Creating default Vault configuration"
+%{if vault_license != null }
+  echo "${vault_license}" > "$${VAULT_PATH}/license"
+%{endif}
   local default_config_json=$(cat <<EOF
 ui = true
 cluster_addr = "http://$${instance_ip_address}:8201"
@@ -257,6 +260,10 @@ seal "${seal_config.type}" {
     ${attr_key} = "${attr_value}"
   %{ endfor ~}
 }
+%{endif}
+
+%{if vault_license != null }
+license_path = "$${VAULT_PATH}/license"
 %{endif}
 EOF
 )

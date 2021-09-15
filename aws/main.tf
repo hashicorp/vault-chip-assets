@@ -267,6 +267,7 @@ data "template_cloudinit_config" "vault" {
         skip_init                = var.skip_init
         additional_setup         = var.additional_setup
         vault_load_balancer      = aws_lb.vault.dns_name
+        vault_license            = var.vault_license
         seal_config = {
           type = "awskms"
           attributes = {
@@ -278,6 +279,7 @@ data "template_cloudinit_config" "vault" {
     )
   }
 }
+
 
 module "vault" {
   source  = "terraform-aws-modules/autoscaling/aws"
@@ -333,10 +335,10 @@ resource "aws_lb_target_group" "vault" {
   health_check {
     interval            = "5"
     timeout             = "2"
-    path                = "/v1/sys/health?uninitcode=474"
+    path                = "/v1/sys/health?uninitcode=474&perfstandbyok"
     port                = "traffic-port"
     protocol            = "HTTP"
-    matcher             = "200,472,473,474"
+    matcher             = "200,472,474"
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }

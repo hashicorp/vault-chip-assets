@@ -130,7 +130,7 @@ resource "aws_instance" "bastion" {
 sudo apt-get update -y
 sudo apt-get install -y unzip
 
-wget https://releases.hashicorp.com/vault/1.7.1+ent/vault_1.7.1+ent_linux_amd64.zip -O vault.zip
+wget https://releases.hashicorp.com/vault/1.8.2+ent/vault_1.8.2+ent_linux_amd64.zip -O vault.zip
 unzip vault
 mv vault /usr/bin/vault
 EOF
@@ -140,11 +140,12 @@ EOF
 
 module "primary_cluster" {
   source                     = "../../"
-  vault_version              = "1.7.1+ent"
+  vault_version              = "1.8.2+ent"
   vault_cluster_size         = 3
   enable_deletion_protection = false
   subnet_second_octet        = "0"
   force_bucket_destroy       = true
+  vault_license              = var.vault_license
   tags                       = local.tags
   providers = {
     aws = aws.region1
@@ -153,11 +154,12 @@ module "primary_cluster" {
 
 module "dr_cluster" {
   source                     = "../../"
-  vault_version              = "1.7.1+ent"
+  vault_version              = "1.8.2+ent"
   vault_cluster_size         = 1
   enable_deletion_protection = false
   subnet_second_octet        = "1"
   force_bucket_destroy       = true
+  vault_license              = var.vault_license
   tags                       = local.tags
   providers = {
     aws = aws.region2
@@ -166,11 +168,12 @@ module "dr_cluster" {
 
 module "eu_cluster" {
   source                     = "../../"
-  vault_version              = "1.7.1+ent"
+  vault_version              = "1.8.2+ent"
   vault_cluster_size         = 1
   enable_deletion_protection = false
   subnet_second_octet        = "2"
   force_bucket_destroy       = true
+  vault_license              = var.vault_license
   tags                       = local.tags
   providers = {
     aws = aws.region3

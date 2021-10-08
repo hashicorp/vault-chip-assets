@@ -35,7 +35,7 @@ output "Jump_Status" {
   value = "ssh -S jump_tunnel -O check ubuntu@${aws_instance.bastion.public_dns}"
 }
 output "Jump_Close" {
-  value = "ssh -S jump_tunnel -O exit ubuntu@${aws_instance.bastion.public_dns}"
+  value = "ssh -S jump_tunnel -O exit ubuntu@${aws_instance.bastion.public_dns} #This closes existing connections. If there are non you will get an error message."
 }
 
 output "Jump_Instructions" {

@@ -189,7 +189,7 @@ resource "aws_default_security_group" "us-vpc-default" {
 resource "aws_instance" "eu-web" {
   provider             = aws.eu-central-1
   ami                  = data.aws_ami.eu-latest-image.id
-  instance_type        = "t2.micro"
+  instance_type        = "t3.micro"
   subnet_id            = aws_subnet.eu-subnet[0].id
   key_name             = var.ssh_key_name
   iam_instance_profile = aws_iam_instance_profile.instance-profile.id
@@ -202,7 +202,7 @@ sudo apt-get -y install python3-flask python3-pandas python3-pymysql python3-bot
 sudo useradd flask
 sudo mkdir -p /opt/flask
 sudo git clone https://github.com/hashicorp/vault-chip-assets.git
-cp -r vault-chip-assets/flaskapp/* /opt/flask/
+mv vault-chip-assets/flaskapp/* /opt/flask/
 
 mysqldbcreds=$(cat <<MYSQLDBCREDS
 {
@@ -254,7 +254,7 @@ EOF
 resource "aws_instance" "us-web" {
   provider             = aws.us-east-1
   ami                  = data.aws_ami.us-latest-image.id
-  instance_type        = "t2.micro"
+  instance_type        = "t3.micro"
   subnet_id            = aws_subnet.us-subnet[0].id
   key_name             = var.ssh_key_name
   iam_instance_profile = aws_iam_instance_profile.instance-profile.id
@@ -268,7 +268,7 @@ sudo useradd flask
 sudo mkdir -p /opt/flask
 sudo chown -R flask:flask /opt/flask
 sudo git clone https://github.com/hashicorp/vault-chip-assets.git
-cp -r vault-chip-assets/flaskapp/* /opt/flask/
+mv vault-chip-assets/flaskapp/* /opt/flask/
 
 mysqldbcreds=$(cat <<MYSQLDBCREDS
 {

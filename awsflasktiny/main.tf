@@ -197,7 +197,7 @@ resource "aws_instance" "eu-web" {
   user_data = <<EOF
 #!/bin/bash
 sudo apt-get -y update
-sudo apt-get -y install python3-flask python3-pandas python3-pymysql python3-boto3
+sudo apt-get -y install python3-flask python3-pandas python3-pymysql python3-boto3 python3-systemd
 
 sudo useradd flask
 sudo mkdir -p /opt/flask

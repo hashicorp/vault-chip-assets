@@ -10,6 +10,8 @@ import io
 import pymysql
 import subprocess
 import boto3
+import logging
+from systemd import journal
 
 # Be the main frame for all applications
 # Loads static page into one tab
@@ -25,6 +27,11 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'MyDB'
+
+
+logger = logging.getLogger(__name__)
+journaldHandler = journal.JournalHandler()
+logger.addHandler(journaldHandler)
 
 
 @app.route('/healthz')
@@ -56,7 +63,7 @@ def consul_template():
             result = {**context, **jsondata}
             cursor.close()
     except Exception as e:
-        print(e)
+        app.logger.exception(e)
     return render_template('consul-template.html', **result)
 
 
@@ -83,6 +90,7 @@ def transit_post():
         result = subprocess.check_output(
             [run_command], shell=True)
     except subprocess.CalledProcessError as e:
+        app.logger.exception(e)
         return "An error occurred while trying to fetch task status updates."
     stringdata = json.dumps({"command": command, "text": result.decode("utf-8")})
     context = json.loads(stringdata)
@@ -115,7 +123,7 @@ def s3bucket_post():
                 #                aws_session_token=creds['SESSION_TOKEN'],
             )
     except Exception as e:
-        print(e)
+        app.logger.exception(e)
     bucket = request.form['bucket']
     key = request.form['key']
     command = request.form['command']

@@ -56,22 +56,25 @@ module "vpc" {
 # AWS S3 Bucket for Certificates, Private Keys, Encryption Key, and License
 resource "aws_s3_bucket" "setup_bucket" {
   bucket        = "${random_id.cluster_name.hex}-setup"
-  acl           = "private"
   force_destroy = true
+  tags          = local.tags
+}
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.bucketkms.arn
-        sse_algorithm     = "aws:kms"
-      }
+resource "aws_s3_bucket_server_side_encryption_configuration" "setup_bucket_sse" {
+  bucket = aws_s3_bucket.setup_bucket.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.bucketkms.arn
+      sse_algorithm     = "aws:kms"
     }
   }
-
-  tags = local.tags
-
-
 }
+
+resource "aws_s3_bucket_acl" "setup_bucket_acl" {
+  bucket = aws_s3_bucket.setup_bucket.id
+  acl    = "private"
+}
+
 
 resource "aws_s3_bucket_public_access_block" "setup_bucket" {
   bucket              = aws_s3_bucket.setup_bucket.id

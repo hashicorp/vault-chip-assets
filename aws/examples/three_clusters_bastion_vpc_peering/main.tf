@@ -135,7 +135,9 @@ unzip vault
 mv vault /usr/bin/vault
 EOF
 
-  tags = local.tags
+  tags = merge(local.tags,  {
+      "Name" = "bastion"
+    })
 }
 
 module "primary_cluster" {

@@ -23,19 +23,19 @@ output "EU_Vault_Cluster_LB" {
 }
 
 output "Jump_to_Primary" {
-  value = "ssh -4 -fNTMS jump_tunnel -i ${aws_key_pair.key.key_name}.pem -L 8200:${module.primary_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
+  value = "ssh -4 -fNTMS jump_tunnel -i ${abspath(local_file.private_key.filename)} -L 8200:${module.primary_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
 }
 output "Jump_to_DR" {
-  value = "ssh -4 -fNTMS jump_tunnel -i ${aws_key_pair.key.key_name}.pem -L 8200:${module.dr_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
+  value = "ssh -4 -fNTMS jump_tunnel -i ${abspath(local_file.private_key.filename)} -L 8200:${module.dr_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
 }
 output "Jump_to_EU" {
-  value = "ssh -4 -fNTMS jump_tunnel -i ${aws_key_pair.key.key_name}.pem -L 8200:${module.eu_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
+  value = "ssh -4 -fNTMS jump_tunnel -i ${abspath(local_file.private_key.filename)} -L 8200:${module.eu_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
 }
 output "Jump_Status" {
   value = "ssh -S jump_tunnel -O check ubuntu@${aws_instance.bastion.public_dns}"
 }
 output "Jump_Close" {
-  value = "ssh -S jump_tunnel -O exit ubuntu@${aws_instance.bastion.public_dns} #This closes existing connections. If there are non you will get an error message."
+  value = "ssh -S jump_tunnel -O exit ubuntu@${aws_instance.bastion.public_dns} #This closes existing connections. If there are none you will get an error message."
 }
 
 output "Jump_Instructions" {

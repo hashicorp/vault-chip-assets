@@ -286,7 +286,7 @@ data "template_cloudinit_config" "vault" {
 
 module "vault" {
   source  = "terraform-aws-modules/autoscaling/aws"
-  version = "4.1.0"
+  version = "5.1.1"
 
   image_id                  = var.ami_id != "" ? var.ami_id : data.aws_ami.latest-image.id
   name                      = "${random_id.cluster_name.hex}-vault"
@@ -302,9 +302,8 @@ module "vault" {
   force_delete              = true
   iam_instance_profile_name = aws_iam_instance_profile.instance_profile.name
   user_data_base64          = data.template_cloudinit_config.vault.rendered
-  create_lt                 = true
+  create_launch_template    = true
   update_default_version    = true
-  use_lt                    = true
   instance_refresh = {
     strategy = "Rolling"
     preferences = {
@@ -314,7 +313,7 @@ module "vault" {
     triggers = ["tag"]
   }
 
-  tags_as_map = merge(local.tags,
+  tags = merge(local.tags,
     # This updates the tags when user data changes to enforce instance refresh
   { ud_md5 = md5(data.template_cloudinit_config.vault.rendered) })
 }

@@ -367,7 +367,7 @@ resource "aws_db_instance" "eu-database" {
   engine                 = "mysql"
   engine_version         = "5.7"
   instance_class         = "db.t2.micro"
-  name                   = "mydb"
+  db_name                = "mydb"
   username               = "foo"
   password               = "foobarbaz"
   parameter_group_name   = "default.mysql5.7"
@@ -480,41 +480,44 @@ data "aws_route_tables" "vpc3" {
   count    = var.vpc3_id == "" ? 0 : 1
   vpc_id   = var.vpc3_id
 }
-
-data "aws_subnet_ids" "vpc1" {
+data "aws_subnets" "vpc1" {
   provider = aws.vpc1
-  count    = var.vpc1_id == "" ? 0 : 1
-  vpc_id   = var.vpc1_id
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc1_id]
+  }
 }
-
-data "aws_subnet_ids" "vpc2" {
+data "aws_subnets" "vpc2" {
   provider = aws.vpc2
-  count    = var.vpc2_id == "" ? 0 : 1
-  vpc_id   = var.vpc2_id
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc2_id]
+  }
 }
-
-data "aws_subnet_ids" "vpc3" {
+data "aws_subnets" "vpc3" {
   provider = aws.vpc3
-  count    = var.vpc3_id == "" ? 0 : 1
-  vpc_id   = var.vpc3_id
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc3_id]
+  }
 }
 
 data "aws_subnet" "vpc1" {
   provider = aws.vpc1
-  count    = var.vpc1_id == "" ? 0 : length(data.aws_subnet_ids.vpc1[0].ids)
-  id       = tolist(data.aws_subnet_ids.vpc1[0].ids)[count.index]
+  for_each = toset(data.aws_subnets.vpc1.ids)
+  id       = each.value
 }
 
 data "aws_subnet" "vpc2" {
   provider = aws.vpc2
-  count    = var.vpc2_id == "" ? 0 : length(data.aws_subnet_ids.vpc2[0].ids)
-  id       = tolist(data.aws_subnet_ids.vpc2[0].ids)[count.index]
+  for_each = toset(data.aws_subnets.vpc2.ids)
+  id       = each.value
 }
 
 data "aws_subnet" "vpc3" {
   provider = aws.vpc3
-  count    = var.vpc3_id == "" ? 0 : length(data.aws_subnet_ids.vpc3[0].ids)
-  id       = tolist(data.aws_subnet_ids.vpc3[0].ids)[count.index]
+  for_each = toset(data.aws_subnets.vpc3.ids)
+  id       = each.value
 }
 
 resource "aws_route" "us-flask-vpc" {

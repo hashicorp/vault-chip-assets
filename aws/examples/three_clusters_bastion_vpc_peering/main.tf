@@ -34,10 +34,10 @@ locals {
   )
 }
 
-resource "local_file" "private_key" {
-  sensitive_content = tls_private_key.ssh.private_key_pem
-  filename          = "${path.module}/${random_id.deployment_tag.hex}-key.pem"
-  file_permission   = "0400"
+resource "local_sensitive_file" "private_key" {
+  content         = tls_private_key.ssh.private_key_pem
+  filename        = "${path.module}/${random_id.deployment_tag.hex}-key.pem"
+  file_permission = "0400"
 }
 
 data "aws_availability_zones" "available" {
@@ -135,9 +135,22 @@ unzip vault
 mv vault /usr/bin/vault
 EOF
 
-  tags = merge(local.tags,  {
-      "Name" = "bastion"
-    })
+  tags = merge(local.tags, {
+    "Name" = "bastion"
+  })
+}
+
+resource "null_resource" "update_hosts" {
+  provisioner "local-exec" {
+    command = <<EOC
+      cat <<-EOF >> /etc/ssh/ssh_config
+Host bastion
+    HostName ${aws_instance.bastion.public_ip}
+    User ubuntu
+    IdentityFile ${abspath(local_sensitive_file.private_key.filename)}
+EOF
+    EOC
+  }
 }
 
 module "primary_cluster" {

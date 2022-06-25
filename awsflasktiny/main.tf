@@ -395,7 +395,7 @@ resource "aws_db_instance" "us-database" {
   engine                 = "mysql"
   engine_version         = "5.7"
   instance_class         = "db.t2.micro"
-  name                   = "mydb"
+  db_name                = "mydb"
   username               = "foo"
   password               = "foobarbaz"
   parameter_group_name   = "default.mysql5.7"
@@ -522,18 +522,18 @@ data "aws_subnet" "vpc3" {
 
 resource "aws_route" "us-flask-vpc" {
   provider                  = aws.us-east-1
-  count                     = length(setproduct([aws_vpc.us-vpc.default_route_table_id], concat(data.aws_subnet.vpc1.*.cidr_block, data.aws_subnet.vpc2.*.cidr_block, data.aws_subnet.vpc3.*.cidr_block)))
-  route_table_id            = element(tolist(setproduct([aws_vpc.us-vpc.default_route_table_id], concat(data.aws_subnet.vpc1.*.cidr_block, data.aws_subnet.vpc2.*.cidr_block, data.aws_subnet.vpc3.*.cidr_block))), count.index)[0]
-  destination_cidr_block    = element(tolist(setproduct([aws_vpc.us-vpc.default_route_table_id], concat(data.aws_subnet.vpc1.*.cidr_block, data.aws_subnet.vpc2.*.cidr_block, data.aws_subnet.vpc3.*.cidr_block))), count.index)[1]
-  vpc_peering_connection_id = { regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc1[0].cidr_block) = aws_vpc_peering_connection.vpc1[0].id, regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc2[0].cidr_block) = aws_vpc_peering_connection.vpc2[0].id, regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc3[0].cidr_block) = aws_vpc_peering_connection.vpc3[0].id }[regex("^[0-9]*[.][0-9]*", element(tolist(setproduct([aws_vpc.us-vpc.default_route_table_id], concat(data.aws_subnet.vpc1.*.cidr_block, data.aws_subnet.vpc2.*.cidr_block, data.aws_subnet.vpc3.*.cidr_block))), count.index)[1])]
+  count                     = var.vpc1_id == "" ? 0 : length(setproduct([aws_vpc.us-vpc.default_route_table_id], concat([for s in data.aws_subnet.vpc1 : s.cidr_block], [for s in data.aws_subnet.vpc2 : s.cidr_block], [for s in data.aws_subnet.vpc3 : s.cidr_block])))
+  route_table_id            = element(tolist(setproduct([aws_vpc.us-vpc.default_route_table_id], concat([for s in data.aws_subnet.vpc1 : s.cidr_block], [for s in data.aws_subnet.vpc2 : s.cidr_block], [for s in data.aws_subnet.vpc3 : s.cidr_block]))), count.index)[0]
+  destination_cidr_block    = element(tolist(setproduct([aws_vpc.us-vpc.default_route_table_id], concat([for s in data.aws_subnet.vpc1 : s.cidr_block], [for s in data.aws_subnet.vpc2 : s.cidr_block], [for s in data.aws_subnet.vpc3 : s.cidr_block]))), count.index)[1]
+  vpc_peering_connection_id = { regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc1[0].cidr_block) = aws_vpc_peering_connection.vpc1[0].id, regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc2[0].cidr_block) = aws_vpc_peering_connection.vpc2[0].id, regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc3[0].cidr_block) = aws_vpc_peering_connection.vpc3[0].id }[regex("^[0-9]*[.][0-9]*", element(tolist(setproduct([aws_vpc.us-vpc.default_route_table_id], concat([for s in data.aws_subnet.vpc1 : s.cidr_block], [for s in data.aws_subnet.vpc2 : s.cidr_block], [for s in data.aws_subnet.vpc3 : s.cidr_block]))), count.index)[1])]
 }
 
 resource "aws_route" "eu-flask-vpc" {
   provider                  = aws.eu-central-1
-  count                     = length(setproduct([aws_vpc.eu-vpc.default_route_table_id], concat(data.aws_subnet.vpc1.*.cidr_block, data.aws_subnet.vpc2.*.cidr_block, data.aws_subnet.vpc3.*.cidr_block)))
-  route_table_id            = element(tolist(setproduct([aws_vpc.eu-vpc.default_route_table_id], concat(data.aws_subnet.vpc1.*.cidr_block, data.aws_subnet.vpc2.*.cidr_block, data.aws_subnet.vpc3.*.cidr_block))), count.index)[0]
-  destination_cidr_block    = element(tolist(setproduct([aws_vpc.eu-vpc.default_route_table_id], concat(data.aws_subnet.vpc1.*.cidr_block, data.aws_subnet.vpc2.*.cidr_block, data.aws_subnet.vpc3.*.cidr_block))), count.index)[1]
-  vpc_peering_connection_id = { regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc1[0].cidr_block) = aws_vpc_peering_connection.vpc1[1].id, regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc2[0].cidr_block) = aws_vpc_peering_connection.vpc2[1].id, regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc3[0].cidr_block) = aws_vpc_peering_connection.vpc3[1].id }[regex("^[0-9]*[.][0-9]*", element(tolist(setproduct([aws_vpc.eu-vpc.default_route_table_id], concat(data.aws_subnet.vpc1.*.cidr_block, data.aws_subnet.vpc2.*.cidr_block, data.aws_subnet.vpc3.*.cidr_block))), count.index)[1])]
+  count                     = var.vpc1_id == "" ? 0 : length(setproduct([aws_vpc.eu-vpc.default_route_table_id], concat([for s in data.aws_subnet.vpc1 : s.cidr_block], [for s in data.aws_subnet.vpc2 : s.cidr_block], [for s in data.aws_subnet.vpc3 : s.cidr_block])))
+  route_table_id            = element(tolist(setproduct([aws_vpc.eu-vpc.default_route_table_id], concat([for s in data.aws_subnet.vpc1 : s.cidr_block], [for s in data.aws_subnet.vpc2 : s.cidr_block], [for s in data.aws_subnet.vpc3 : s.cidr_block]))), count.index)[0]
+  destination_cidr_block    = element(tolist(setproduct([aws_vpc.eu-vpc.default_route_table_id], concat([for s in data.aws_subnet.vpc1 : s.cidr_block], [for s in data.aws_subnet.vpc2 : s.cidr_block], [for s in data.aws_subnet.vpc3 : s.cidr_block]))), count.index)[1]
+  vpc_peering_connection_id = { regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc1[0].cidr_block) = aws_vpc_peering_connection.vpc1[1].id, regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc2[0].cidr_block) = aws_vpc_peering_connection.vpc2[1].id, regex("^[0-9]*[.][0-9]*", data.aws_vpc.vpc3[0].cidr_block) = aws_vpc_peering_connection.vpc3[1].id }[regex("^[0-9]*[.][0-9]*", element(tolist(setproduct([aws_vpc.eu-vpc.default_route_table_id], concat([for s in data.aws_subnet.vpc1 : s.cidr_block], [for s in data.aws_subnet.vpc2 : s.cidr_block], [for s in data.aws_subnet.vpc3 : s.cidr_block]))), count.index)[1])]
 }
 
 resource "aws_route" "vpc1" {

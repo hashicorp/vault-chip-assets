@@ -3,11 +3,11 @@ output "Deployment_Tag" {
 }
 
 output "Bastion_DNS" {
-  value = aws_instance.bastion.public_dns
+  value = "bastion"
 }
 
 output "SSH_Key" {
-  value = abspath(local_file.private_key.filename)
+  value = abspath(local_sensitive_file.private_key.filename)
 }
 
 output "Primary_Vault_Cluster_LB" {
@@ -23,27 +23,29 @@ output "EU_Vault_Cluster_LB" {
 }
 
 output "Jump_to_Primary" {
-  value = "ssh -4 -fNTMS jump_tunnel -i ${abspath(local_file.private_key.filename)} -L 8200:${module.primary_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
+  value = "ssh -4 -fNTMS /tmp/jump_tunnel -L 8200:${module.primary_cluster.vault_load_balancer}:8200 bastion"
 }
 output "Jump_to_DR" {
-  value = "ssh -4 -fNTMS jump_tunnel -i ${abspath(local_file.private_key.filename)} -L 8200:${module.dr_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
+  value = "ssh -4 -fNTMS /tmp/jump_tunnel -L 8200:${module.dr_cluster.vault_load_balancer}:8200 bastion"
 }
 output "Jump_to_EU" {
-  value = "ssh -4 -fNTMS jump_tunnel -i ${abspath(local_file.private_key.filename)} -L 8200:${module.eu_cluster.vault_load_balancer}:8200 ubuntu@${aws_instance.bastion.public_dns}"
+  value = "ssh -4 -fNTMS /tmp/jump_tunnel -L 8200:${module.eu_cluster.vault_load_balancer}:8200 bastion"
 }
 output "Jump_Status" {
-  value = "ssh -S jump_tunnel -O check ubuntu@${aws_instance.bastion.public_dns}"
+  value = "ssh -S /tmp/jump_tunnel -O check bastion"
 }
 output "Jump_Close" {
-  value = "ssh -S jump_tunnel -O exit ubuntu@${aws_instance.bastion.public_dns} #This closes existing connections. If there are none you will get an error message."
+  value = "ssh -S /tmp/jump_tunnel -O exit bastion           #This closes existing connections. If there are none you will get an error message."
 }
 
 output "Jump_Instructions" {
   value = <<EOF
+
 Use jump command to forward localhost:8200 to connect to the loadbalancer
 of the cluster you would like to connect to. Then configure VAULT_ADDR to
 use http://localhost:8200. When switching clusters, close out prior jump
 tunnel and initiate a new tunnel.
+
 EOF
 }
 

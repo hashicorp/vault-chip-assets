@@ -11,3 +11,4 @@
 # pem files
 *.pem
 .terraform.lock.hcl
+flaskapp/__pycache__

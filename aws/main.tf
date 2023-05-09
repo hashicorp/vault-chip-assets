@@ -70,18 +70,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "setup_bucket_sse"
   }
 }
 
-resource "aws_s3_bucket_acl" "setup_bucket_acl" {
-  bucket = aws_s3_bucket.setup_bucket.id
-  acl    = "private"
-}
-
-
-resource "aws_s3_bucket_public_access_block" "setup_bucket" {
-  bucket              = aws_s3_bucket.setup_bucket.id
-  block_public_acls   = true
-  block_public_policy = true
-}
-
 data "aws_iam_policy_document" "setup_bucket_access" {
   statement {
     effect = "Allow"

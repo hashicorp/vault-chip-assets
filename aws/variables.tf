@@ -16,7 +16,7 @@ variable "ami_filter_name" {
 variable "vpc_id" { default = "" }
 variable "subnet_ids" { default = "" }
 variable "vault_version" {
-  default = "1.8.2+ent"
+  default = "1.13.2+ent"
 }
 variable "consul_path" { default = "" }
 variable "vault_path" { default = "" }

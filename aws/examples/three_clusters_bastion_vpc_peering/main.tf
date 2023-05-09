@@ -105,26 +105,33 @@ resource "aws_key_pair" "key" {
 data "aws_ami" "latest-image" {
   provider    = aws.region1
   most_recent = true
-  owners      = ["099720109477"]
+  owners      = ["099720109477"] # Canonical
+  name_regex  = "ubuntu-jammy.*"
 
   filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
   }
 
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
   }
+
 }
 
 resource "aws_instance" "bastion" {
-  provider      = aws.region1
-  ami           = data.aws_ami.latest-image.id
-  instance_type = "t3.micro"
-  subnet_id     = module.bastion_vpc.public_subnets[0]
-  key_name      = aws_key_pair.key.key_name
-  user_data     = <<EOF
+  provider                    = aws.region1
+  ami                         = data.aws_ami.latest-image.id
+  instance_type               = "t3.micro"
+  subnet_id                   = module.bastion_vpc.public_subnets[0]
+  key_name                    = aws_key_pair.key.key_name
+  associate_public_ip_address = true
+  user_data                   = <<EOF
 #!/bin/bash
 
 sudo apt-get update -y

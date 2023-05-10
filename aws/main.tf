@@ -4,10 +4,11 @@ resource "random_id" "cluster_name" {
 
 # Local for tag to attach to all items
 locals {
+  resource_prefix = var.prefix != "" ? var.prefix : random_id.cluster_name.hex
   tags = merge(
     var.tags,
     {
-      "ClusterName" = random_id.cluster_name.hex
+      "ClusterName" = local.resource_prefix
     },
   )
 }
@@ -21,7 +22,7 @@ data "aws_region" "current" {}
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
-  name   = "${random_id.cluster_name.hex}-vpc"
+  name   = "${local.resource_prefix}-vpc"
 
   cidr = "10.${var.subnet_second_octet}.0.0/16"
 
@@ -42,20 +43,20 @@ module "vpc" {
   enable_dns_support   = true
 
   public_subnet_tags = {
-    Name = "overridden-name-public"
+    Name = "${var.prefix}-public"
   }
 
   tags = local.tags
 
   vpc_tags = {
-    Name    = "${random_id.cluster_name.hex}-vpc"
+    Name    = "${local.resource_prefix}-vpc"
     Purpose = "vault"
   }
 }
 
 # AWS S3 Bucket for Certificates, Private Keys, Encryption Key, and License
 resource "aws_s3_bucket" "setup_bucket" {
-  bucket        = "${random_id.cluster_name.hex}-setup"
+  bucket_prefix = "${local.resource_prefix}-setup"
   force_destroy = true
   tags          = local.tags
 }
@@ -97,13 +98,13 @@ data "aws_iam_policy_document" "setup_bucket_access" {
 
 
 resource "aws_iam_role_policy" "setup_bucket" {
-  name   = "${random_id.cluster_name.hex}-setup_bucket_access"
+  name   = "${local.resource_prefix}-setup_bucket_access"
   role   = aws_iam_role.instance_role.id
   policy = data.aws_iam_policy_document.setup_bucket_access.json
 }
 
 resource "aws_kms_key" "bucketkms" {
-  description             = "${random_id.cluster_name.hex}-bucketkey"
+  description             = "${local.resource_prefix}-bucketkey"
   deletion_window_in_days = 7
   # Add deny all policy to kms key to ensure accessing secrets
   # is a break-glass proceedure
@@ -212,7 +213,7 @@ resource "aws_kms_key" "vault_unseal" {
   deletion_window_in_days = 10
 
   tags = {
-    Name = "vault-kms-unseal-${random_id.cluster_name.hex}"
+    Name = "vault-kms-unseal-${local.resource_prefix}"
   }
 }
 
@@ -249,7 +250,7 @@ data "template_cloudinit_config" "vault" {
         vault_binary             = var.vault_binary
         vault_version            = var.vault_version,
         cluster_tag_key          = "ClusterName",
-        cluster_tag_value        = random_id.cluster_name.hex,
+        cluster_tag_value        = local.resource_prefix,
         enable_gossip_encryption = var.enable_gossip_encryption,
         enable_rpc_encryption    = var.enable_rpc_encryption,
         environment              = var.environment,
@@ -277,14 +278,14 @@ module "vault" {
   version = "5.1.1"
 
   image_id                  = var.ami_id != "" ? var.ami_id : data.aws_ami.latest-image.id
-  name                      = "${random_id.cluster_name.hex}-vault"
+  name                      = "${local.resource_prefix}-vault"
   health_check_type         = "EC2"
   max_size                  = var.vault_cluster_size
   min_size                  = var.vault_cluster_size
   desired_capacity          = var.vault_cluster_size
   instance_type             = "t3.small"
   target_group_arns         = [aws_lb_target_group.vault.arn]
-  vpc_zone_identifier       = module.vpc.public_subnets
+  vpc_zone_identifier       = module.vpc.private_subnets
   key_name                  = var.ssh_key_name
   enabled_metrics           = ["GroupTotalInstances"]
   force_delete              = true
@@ -307,10 +308,10 @@ module "vault" {
 }
 
 resource "aws_lb" "vault" {
-  name               = "${random_id.cluster_name.hex}-vault-lb"
+  name               = "${local.resource_prefix}-vault-lb"
   internal           = true
   load_balancer_type = "application"
-  subnets            = module.vpc.public_subnets
+  subnets            = module.vpc.private_subnets
 
   enable_deletion_protection = var.enable_deletion_protection
   tags                       = local.tags
@@ -318,17 +319,17 @@ resource "aws_lb" "vault" {
 }
 
 resource "aws_lb_target_group" "vault" {
-  name     = "${random_id.cluster_name.hex}-vault-lb"
+  name     = "${local.resource_prefix}-vault-lb"
   port     = 8200
   protocol = "HTTP"
   vpc_id   = module.vpc.vpc_id
   health_check {
     interval            = "5"
     timeout             = "2"
-    path                = "/v1/sys/health?uninitcode=474&perfstandbyok"
+    path                = "/v1/sys/health?uninitcode=474&perfstandbyok=true"
     port                = "traffic-port"
     protocol            = "HTTP"
-    matcher             = "200,472,474"
+    matcher             = "200,472,473,474"
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }

@@ -311,7 +311,7 @@ function main {
   rm -f /etc/update-motd.d/*
   echo "You are logged into $node_name" > /etc/motd
 
-  install "$VAULT_BINARY" "$VAULT_VERSION"
+  install "$VAULT_BINARY" "$VAULT_VERSION*"
   generate_vault_config "$VAULT_PATH" \
     "$VAULT_USER" \
     "$VAULT_AUTO_JOIN_TAG_KEY" "$VAULT_AUTO_JOIN_TAG_VALUE"

@@ -13,5 +13,4 @@ variable "region3" {
 
 variable "vault_license" {
   type    = string
-  default = null
 }

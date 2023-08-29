@@ -46,8 +46,10 @@ data "aws_availability_zones" "available" {
 }
 
 module "bastion_vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-  name   = "${random_id.deployment_tag.hex}-bastion"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0.0"
+
+  name = "${random_id.deployment_tag.hex}-bastion"
 
   cidr = "192.168.0.0/16"
 

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
 variable "prefix" { default = "" }
 variable "ssh_key_name" { default = "" }
 variable "consul_cluster_size" { default = 5 }

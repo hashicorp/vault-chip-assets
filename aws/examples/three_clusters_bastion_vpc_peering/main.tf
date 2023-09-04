@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
 # Example to deploy 3 environments with vpc peering
 
 provider "aws" {

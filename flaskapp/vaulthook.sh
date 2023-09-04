@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
 command=$1
 shift 1
 text=$@

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
 output "Cluster_Name" {
   value = random_id.cluster_name.hex
 }

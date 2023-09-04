@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
 output "eu_instance_availability_zone" {
   value = aws_instance.eu-web.availability_zone
 }

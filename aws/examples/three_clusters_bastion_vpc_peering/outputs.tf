@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
 output "Deployment_Tag" {
   value = random_id.deployment_tag.hex
 }

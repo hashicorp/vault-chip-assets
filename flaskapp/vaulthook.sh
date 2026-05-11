@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2021, 2026
+
 command=$1
 shift 1
 text=$@

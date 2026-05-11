@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2021, 2026
+
 variable "prefix" { default = "" }
 variable "ssh_key_name" { default = "" }
 variable "consul_cluster_size" { default = 5 }

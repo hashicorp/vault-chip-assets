@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2021, 2026
+
 output "Deployment_Tag" {
   value = random_id.deployment_tag.hex
 }

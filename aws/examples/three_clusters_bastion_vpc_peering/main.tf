@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2021, 2026
+
 # Example to deploy 3 environments with vpc peering
 
 provider "aws" {

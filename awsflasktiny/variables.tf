@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2021, 2026
+
 variable "project_tag" {
   type    = string
   default = "flask-app"

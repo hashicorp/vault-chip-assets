@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2021, 2026
+
 # Setup provider
 provider "aws" {
   alias  = "us-east-1"

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2021, 2026
+
 import os
 
 # Configuration defaults for all settings for this application

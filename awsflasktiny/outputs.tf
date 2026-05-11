@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2021, 2026
+
 output "eu_instance_availability_zone" {
   value = aws_instance.eu-web.availability_zone
 }

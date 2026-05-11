@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2021, 2026
+
 output "Cluster_Name" {
   value = random_id.cluster_name.hex
 }
